@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from worker.worker.database.constant import port, uri
+from worker.database.constant import port, uri
 
 
 class Dao:

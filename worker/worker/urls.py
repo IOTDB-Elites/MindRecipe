@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from worker.worker.view import monitor, operation
+from worker.view import monitor, operation
 
 urlpatterns = [
     path('admin/', admin.site.urls),

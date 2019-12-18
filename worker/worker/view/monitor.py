@@ -2,12 +2,11 @@
 from django.http import HttpResponse
 import json
 
+from worker.logic.monitor import report
+
 
 def receive_heartbeat(request):
-    res = {'success': True,
-           'message': 'Receive heart beat',
-           'data': {}}
-    return warp_to_response(res)
+    return warp_to_response(report())
 
 
 def warp_to_response(res):

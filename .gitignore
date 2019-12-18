@@ -2,3 +2,9 @@
 master/master/__pycache__
 worker/worker/__pycache__
 worker/worker/database/__pycache__
+db.sqlite3
+master/master/call_worker/__pycache__
+master/master/logic/__pycache__
+master/master/view/__pycache__
+worker/worker/logic/__pycache__
+worker/worker/view/__pycache__
