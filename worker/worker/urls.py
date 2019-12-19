@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/operation/read', operation.handle_read),
     path('api/operation/write', operation.handle_write),
+    path('api/admin/report', monitor.receive_report),
     path('api/admin/heartbeat', monitor.receive_heartbeat)
 ]

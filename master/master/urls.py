@@ -16,8 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from master.logic.heartbeat import service
 from master.view import operation, monitor
 
+service()
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/operation/read', operation.handle_read),

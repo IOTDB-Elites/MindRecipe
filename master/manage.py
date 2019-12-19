@@ -3,6 +3,8 @@
 import os
 import sys
 
+from master.logic.heartbeat import service
+
 
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'master.settings')
