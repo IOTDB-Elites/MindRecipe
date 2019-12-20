@@ -6,25 +6,27 @@ from threading import Thread
 import requests
 
 from master.call_worker.http_request import request_heartbeat
-from master.logic.metadata import workers
+from master.logic.metadata import workers, workers_port
 import multiprocessing
 import subprocess
 
 schedule = sched.scheduler(time.time, time.sleep)
 
 
-def start_worker(worker):
-    subprocess.Popen('./start_worker.sh ' + worker, shell=True, env={})
+def start_worker(worker, port):
+    subprocess.Popen('./start_worker.sh ' + worker + ' ' + port, shell=True, env={})
 
 
 def send_heartbeat(inc):
-    for worker in workers:
+    for i in range(len(workers)):
+        worker = workers[i]
         try:
             request_heartbeat(worker)
         except requests.exceptions.ConnectionError:
             # worker is down!
             print('worker', worker, 'is down restarting...')
-            start_worker(worker)
+            port = workers_port[i]
+            start_worker(worker, port)
             # multiprocessing.Process(target=start_worker, args=(worker,)).start()
             print('start worker', worker)
 
