@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-from mindRecipe.loader.database.constant import port, uri
+from database.constant import port
 
 
 class Dao:

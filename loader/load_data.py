@@ -1,6 +1,6 @@
 import json
 
-from mindRecipe.loader.dao import Dao
+from dao import Dao
 
 ARTICLE_PATH = '/data/mind_recipe_raw_data/article.dat'
 USER_PATH = '/data/mind_recipe_raw_data/user.dat'
