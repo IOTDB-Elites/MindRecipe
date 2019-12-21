@@ -3,9 +3,11 @@ from django.http import HttpResponse
 import json
 
 from worker.logic import user_service
+from worker.logic import article_service
 
 GET_USER_INFO_PARAMS = ['name']
 UPDATE_USER_INFO_PARAMS = ['uid']
+GET_ARTICLE_LIST = ['category']
 
 
 def handle_read(request):
@@ -36,8 +38,19 @@ def get_user_info(request):
         return warp_to_response(error_res)
 
     param = request.GET
+    print(param)
     return warp_to_response(
-        user_service.get_user_info(param['name']))
+        user_service.get_user_info(param['name'], param['region']))
+
+
+def get_article_list(request):
+    error_res = check_get_param(request, GET_ARTICLE_LIST)
+    if error_res is not None:
+        return warp_to_response(error_res)
+    param = request.GET
+    print(param)
+    return warp_to_response(
+        article_service.get_article_list(param['category']))
 
 
 # post method
@@ -72,6 +85,7 @@ def check_post_param(data, params):
                     'message': param + ' parameter is not present in request'}
 
     return None
+
 
 def post_request_to_json(body):
     return json.loads(body.decode('utf-8'))

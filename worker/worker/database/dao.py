@@ -5,7 +5,7 @@ from worker.database.constant import port, uri
 class Dao:
     def __init__(self):
         self.conn = MongoClient(uri, port=port)
-        self.db = self.conn.qh_area_forecast
+        self.db = self.conn.mind_recipe
 
     # insert into db_name, example is here
     # ```
@@ -45,13 +45,20 @@ class Dao:
     def read_data(self, db_name, filter=None):
         if not filter:
             return self.db[db_name].find()
-        return self.db[db_name].find(filter)
+        find_res = self.db[db_name].find(filter)
+        res = []
+        for i in find_res:
+            del i['_id']
+            res.append(i)
+        return res
 
     # read one data from db_name
     def find_one(self, db_name, filter=None):
         if not filter:
-            return self.db[db_name].findOne()
-        return self.db[db_name].findOne(filter)
+            return self.db[db_name].find_one()
+        res = self.db[db_name].find_one(filter)
+        del res['_id']
+        return res
 
     def update_one(self, db_name, filter, entity):
         return self.db[db_name].update(filter, entity)
@@ -64,7 +71,7 @@ class Dao:
 if __name__ == '__main__':
     dao = Dao()
     count = 0
-    for i in dao.read_data('integrated_result', {'month': 9, 'day': {'$gt': 23}}):
+    for i in dao.read_data('user'):
         count += 1
         if count % 10000 == 0:
             print(i)

@@ -1,6 +1,7 @@
+import datetime
 import json
 
-from dao import Dao
+from loader.dao import Dao
 
 ARTICLE_PATH = '/data/mind_recipe_raw_data/article.dat'
 USER_PATH = '/data/mind_recipe_raw_data/user.dat'
@@ -10,6 +11,7 @@ ARTICLE = 'article'
 USER = 'user'
 READ = 'read'
 BEREAD = 'beread'
+POPULARRANK = 'popularrank'
 
 dbms1 = 'mongodb://127.0.0.1:10001/mind_recipe'
 dbms2 = 'mongodb://127.0.0.1:10002/mind_recipe'
@@ -206,9 +208,165 @@ def load_be_read():
         dao_dbms2.insert_many(BEREAD, cache_dbms2)
 
 
-if __name__ == '__main__':
-    map = load_user()
-    load_article()
-    load_read(map)
-    load_be_read()
+def load_pop():
+    map_aid_category = {}
+    with open(ARTICLE_PATH, 'r') as load_article:
+        for line in load_article:
+            data = json.loads(line)
+            map_aid_category[data['aid']] = data['category']
 
+    list_id_time = []
+    with open(READ_PATH, 'r') as load_read:
+        for line in load_read:
+            data = json.loads(line)
+            timestamp = int(data['timestamp']) / 1000
+            one_record = {'id': data['id'],
+                          'aid': data['aid'],
+                          'timestamp': timestamp,
+                          'score': int(data['readOrNot'])
+                                   + int(data['agreeOrNot'])
+                                   + int(data['shareOrNot'])
+                                   + int(data['commentOrNot'])}
+            list_id_time.append(one_record)
+    list_id_time.sort(key=lambda k: (k.get('timestamp'), 0), reverse=True)
+    current_time = float(list_id_time[0]['timestamp'])
+    day_time = last_day(current_time)
+    week_time = last_week(current_time)
+    month_time = last_month(current_time)
+
+    list_aid_dayscore = []
+    list_aid_monthscore = []
+    list_aid_weekscore = []
+    map_aid_dayscore = {}
+    map_aid_monthscore = {}
+    map_aid_weekscore = {}
+
+    for i in range(0, len(list_id_time)):
+        record = list_id_time[i]
+        if record['timestamp'] <= day_time:
+            if not (record['aid'] in map_aid_dayscore):
+                map_aid_dayscore[record['aid']] = record['score']
+                map_aid_monthscore[record['aid']] = record['score']
+                map_aid_weekscore[record['aid']] = record['score']
+            else:
+                map_aid_dayscore[record['aid']] = map_aid_dayscore[record['aid']] + record['score']
+                map_aid_monthscore[record['aid']] = map_aid_monthscore[record['aid']] + record['score']
+                map_aid_weekscore[record['aid']] = map_aid_weekscore[record['aid']] + record['score']
+        elif record['timestamp'] <= week_time:
+            if not (record['aid'] in map_aid_weekscore):
+                map_aid_monthscore[record['aid']] = record['score']
+                map_aid_weekscore[record['aid']] = record['score']
+            else:
+                map_aid_monthscore[record['aid']] = map_aid_monthscore[record['aid']] + record['score']
+                map_aid_weekscore[record['aid']] = map_aid_weekscore[record['aid']] + record['score']
+        elif record['timestamp'] <= month_time:
+            if not (record['aid'] in map_aid_monthscore):
+                map_aid_monthscore[record['aid']] = record['score']
+            else:
+                map_aid_monthscore[record['aid']] = map_aid_monthscore[record['aid']] + record['score']
+        else:
+            break
+    for aid, score in map_aid_dayscore.items():
+        list_aid_dayscore.append({'aid': aid, 'score': score})
+    for aid, score in map_aid_weekscore.items():
+        list_aid_weekscore.append({'aid': aid, 'score': score})
+    for aid, score in map_aid_monthscore.items():
+        list_aid_monthscore.append({'aid': aid, 'score': score})
+    list_aid_dayscore.sort(key=lambda k: (k.get('score'), 0), reverse=True)
+    list_aid_weekscore.sort(key=lambda k: (k.get('score'), 0), reverse=True)
+    list_aid_monthscore.sort(key=lambda k: (k.get('score'), 0), reverse=True)
+
+    dbms1_day_aid = []
+    dbms1_week_aid = []
+    dbms1_month_aid = []
+    dbms2_day_aid = []
+    dbms2_week_aid = []
+    dbms2_month_aid = []
+
+    for i in range(0, len(list_aid_dayscore)):
+        aid = list_aid_dayscore[i]['aid']
+        if map_aid_category[aid] == 'science':
+            dbms1_day_aid.append(aid)
+            dbms2_day_aid.append(aid)
+        elif map_aid_category[aid] == 'technology':
+            dbms2_day_aid.append(aid)
+    for i in range(0, len(list_aid_weekscore)):
+        aid = list_aid_weekscore[i]['aid']
+        if map_aid_category[aid] == 'science':
+            dbms1_week_aid.append(aid)
+            dbms2_week_aid.append(aid)
+        elif map_aid_category[aid] == 'technology':
+            dbms2_week_aid.append(aid)
+    for i in range(0, len(list_aid_monthscore)):
+        aid = list_aid_monthscore[i]['aid']
+        if map_aid_category[aid] == 'science':
+            dbms1_month_aid.append(aid)
+            dbms2_month_aid.append(aid)
+        elif map_aid_category[aid] == 'technology':
+            dbms2_month_aid.append(aid)
+    cache_dbms1 = []
+    cache_dbms2 = []
+    dao_dbms1 = Dao(dbms1)
+    dao_dbms2 = Dao(dbms2)
+    cache_dbms1.append({'id': 1,
+                        'timestamp': datetime.datetime.now().timestamp(),
+                        'temporalGranularity': 'daily', 'articleAidList': dbms1_day_aid})
+    cache_dbms1.append({'id': 2,
+                        'timestamp': datetime.datetime.now().timestamp(),
+                        'temporalGranularity': 'weekly', 'articleAidList': dbms1_week_aid})
+    cache_dbms1.append({'id': 3,
+                        'timestamp': datetime.datetime.now().timestamp(),
+                        'temporalGranularity': 'monthly', 'articleAidList': dbms1_month_aid})
+
+    cache_dbms2.append({'id': 1,
+                        'timestamp': datetime.datetime.now().timestamp(),
+                        'temporalGranularity': 'daily', 'articleAidList': dbms2_day_aid})
+    cache_dbms2.append({'id': 2,
+                        'timestamp': datetime.datetime.now().timestamp(),
+                        'temporalGranularity': 'weekly', 'articleAidList': dbms2_week_aid})
+    cache_dbms2.append({'id': 3,
+                        'timestamp': datetime.datetime.now().timestamp(),
+                        'temporalGranularity': 'monthly', 'articleAidList': dbms2_month_aid})
+
+    dao_dbms1.insert_many(POPULARRANK, cache_dbms1)
+    dao_dbms2.insert_many(POPULARRANK, cache_dbms2)
+
+
+def last_day(timestamp):
+    time = datetime.datetime.fromtimestamp(timestamp)
+    return datetime.datetime(time.year, time.month, time.day).timestamp()
+
+
+def last_week(timestamp):
+    time = last_day(timestamp)
+    return time - 7 * 24 * 60 * 60
+
+
+def last_month(timestamp):
+    time = datetime.datetime.fromtimestamp(timestamp)
+    return datetime.datetime(time.year, time.month, 1).timestamp()
+
+
+# def lastWeek(timestamp):
+#
+# def lastMonth(timestamp):
+
+
+if __name__ == '__main__':
+    # map = load_user()
+    # load_article()
+    # load_read(map)
+    # load_be_read()
+
+    load_pop()
+
+# i = int(time.time())
+# print(i)
+# t = time.localtime(i)
+# print(time.strftime("%Y-%m-%d %H:%M:%S", t))
+# x = t + relativedelta(months=-1)
+# print()
+# data_time = time.strftime("%Y-%m-%d %H:%M:%S", t)
+
+# print(t)
+# print(data_time)

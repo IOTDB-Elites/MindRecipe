@@ -1,12 +1,12 @@
 from pymongo import MongoClient
 
-from database.constant import port
+from loader.database.constant import port
 
 
 class Dao:
     def __init__(self, uri):
         self.conn = MongoClient(uri, port=port)
-        self.db = self.conn.mind_recipe ## TODO ? this line decide the database?
+        self.db = self.conn.mind_recipe  ## TODO ? this line decide the database?
 
     def insert_many(self, db_name, data_list):
         self.db[db_name].insert_many(data_list)
@@ -20,6 +20,15 @@ class Dao:
     #     if not filter:
     #         return self.db[db_name].find()
     #     return self.db[db_name].find(filter)
+    # read one data from db_name
+
+    def find_one(self, db_name, filter=None):
+        if not filter:
+            return self.db[db_name].findOne()
+        return self.db[db_name].findOne(filter)
+
+    def update_one(self, db_name, filter, entity):
+        return self.db[db_name].update(filter, entity)
 
     def close(self):
         self.conn.close()

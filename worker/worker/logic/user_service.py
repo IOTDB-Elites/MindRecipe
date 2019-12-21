@@ -1,11 +1,11 @@
-from worker.database.fake_dao import Dao
+from worker.database.dao import Dao
 
 dao = Dao()
 USER_DATABASE = 'user'
 
 
-def get_user_info(name):
-    user = dao.find_one(USER_DATABASE, {'name': name})
+def get_user_info(name, region):
+    user = dao.find_one(USER_DATABASE, {'name': name, 'region': region})
     if user is None:
         return {'success': True,
                 'data': {}}
