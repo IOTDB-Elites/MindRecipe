@@ -47,6 +47,15 @@ class Dao:
             return self.db[db_name].find()
         return self.db[db_name].find(filter)
 
+    # read one data from db_name
+    def find_one(self, db_name, filter=None):
+        if not filter:
+            return self.db[db_name].findOne()
+        return self.db[db_name].findOne(filter)
+
+    def update_one(self, db_name, filter, entity):
+        return self.db[db_name].update(filter, entity)
+
     def close(self):
         self.conn.close()
 

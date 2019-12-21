@@ -6,7 +6,7 @@ from worker.logic.monitor import report
 
 
 def receive_heartbeat(request):
-    return warp_to_response({'Success': True})
+    return warp_to_response({'success': True})
 
 
 def receive_report(request):

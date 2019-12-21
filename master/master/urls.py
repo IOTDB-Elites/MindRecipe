@@ -24,5 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/operation/read', operation.handle_read),
     path('api/operation/write', operation.handle_write),
-    path('api/admin/monitor', monitor.monitor)
+    path('api/admin/monitor', monitor.monitor),
+    path('api/user/get_info', operation.get_user_info),
+    path('api/user/update_info', operation.update_user_info)
+
 ]

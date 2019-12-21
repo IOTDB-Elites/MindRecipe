@@ -20,10 +20,9 @@ def start_worker(worker, port):
 def send_heartbeat(inc):
     for i in range(len(workers)):
         worker = workers[i]
-        try:
-            request_heartbeat(worker)
-        except requests.exceptions.ConnectionError:
-            # worker is down!
+        res = request_heartbeat(worker)
+        if not res['success']:
+            print(res)
             print('worker', worker, 'is down restarting...')
             port = workers_port[i]
             start_worker(worker, port)
