@@ -8,6 +8,9 @@ from worker.logic import article_service
 GET_USER_INFO_PARAMS = ['name']
 UPDATE_USER_INFO_PARAMS = ['uid']
 GET_ARTICLE_LIST = ['category']
+GET_ARTICLE = ['aid']
+GET_FEEDBACK = ['aid']
+GET_READ_LIST = ['uid']
 
 
 def handle_read(request):
@@ -38,7 +41,6 @@ def get_user_info(request):
         return warp_to_response(error_res)
 
     param = request.GET
-    print(param)
     return warp_to_response(
         user_service.get_user_info(param['name'], param['region']))
 
@@ -48,10 +50,34 @@ def get_article_list(request):
     if error_res is not None:
         return warp_to_response(error_res)
     param = request.GET
-    print(param)
     return warp_to_response(
         article_service.get_article_list(param['category']))
 
+def get_article(request):
+    error_res = check_get_param(request, GET_ARTICLE)
+    if error_res is not None:
+        return warp_to_response(error_res)
+    param = request.GET
+    return warp_to_response(
+        article_service.get_article(param['aid']))
+
+def get_popular(request):
+    return warp_to_response(
+        article_service.get_popular())
+
+def get_feedback(request):
+    error_res = check_get_param(request, GET_FEEDBACK)
+    if error_res is not None:
+        return warp_to_response(error_res)
+    param = request.GET
+    return warp_to_response(article_service.get_feedback(param['aid']))
+
+def get_read_list(request):
+    error_res = check_get_param(request, GET_READ_LIST)
+    if error_res is not None:
+        return warp_to_response(error_res)
+    param = request.GET
+    return warp_to_response(user_service.get_read_list(param['uid']))
 
 # post method
 def update_user_info(request):
@@ -85,6 +111,7 @@ def check_post_param(data, params):
                     'message': param + ' parameter is not present in request'}
 
     return None
+
 
 
 def post_request_to_json(body):

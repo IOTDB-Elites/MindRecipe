@@ -26,5 +26,9 @@ urlpatterns = [
     path('api/admin/heartbeat', monitor.receive_heartbeat),
     path('api/user/get_info', operation.get_user_info),
     path('api/user/update_info', operation.update_user_info),
-    path('api/article/get_list', operation.get_article_list)
+    path('api/article/get_list', operation.get_article_list),
+    path('api/article/get_popular', operation.get_popular),
+    path('api/article/get_article', operation.get_article),
+    path('api/article/get_feedback', operation.get_feedback),
+    path('api/user/get_read_list', operation.get_read_list)
 ]

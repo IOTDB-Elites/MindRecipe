@@ -44,8 +44,9 @@ class Dao:
     # read data from db_name
     def read_data(self, db_name, filter=None):
         if not filter:
-            return self.db[db_name].find()
-        find_res = self.db[db_name].find(filter)
+            find_res = self.db[db_name].find()
+        else:
+            find_res = self.db[db_name].find(filter)
         res = []
         for i in find_res:
             del i['_id']
@@ -57,6 +58,8 @@ class Dao:
         if not filter:
             return self.db[db_name].find_one()
         res = self.db[db_name].find_one(filter)
+        if res == None:
+            return res
         del res['_id']
         return res
 
