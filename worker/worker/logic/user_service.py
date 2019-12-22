@@ -11,7 +11,7 @@ ARTICLE_DATABASE = 'article'
 def get_user_info(name, region):
     user = dao.find_one(USER_DATABASE, {'name': name, 'region': region})
     if user is None:
-        return {'success': True,
+        return {'success': False,
                 'data': {}}
 
     return {'success': True,
@@ -19,10 +19,7 @@ def get_user_info(name, region):
 
 
 def get_read_list(uid):
-    print('helloworld')
     read_items = dao.read_data(READ_DATABASE, {'uid': uid})
-    for i in read_items:
-        print(i)
     articles = dao.read_data(ARTICLE_DATABASE)
     be_read_item = dao.read_data(BEREAD_DATABASE)
     if read_items is None:
@@ -38,7 +35,6 @@ def get_read_list(uid):
         article_info = get_one_json_item(articles, {'aid': aid})
         if article_info == {}:
             continue
-        print(article_info)
         title = article_info['title']
         agreeOrNot = i['agreeOrNot']
         shareOrNot = i['shareOrNot']
@@ -68,7 +64,7 @@ def get_read_list(uid):
             share_list.append({
                 'aid': aid,
                 'title': title,
-                'readNum': read_list,
+                'readNum': readNum,
                 'commentNum': commentNum,
                 'agreeNum': agreeNum,
                 'shareNum': shareNum
@@ -77,7 +73,7 @@ def get_read_list(uid):
             agree_list.append({
                 'aid': aid,
                 'title': title,
-                'readNum': read_list,
+                'readNum': readNum,
                 'commentNum': commentNum,
                 'agreeNum': agreeNum,
                 'shareNum': shareNum
@@ -101,33 +97,37 @@ def update_feedback(feedback):
     aid = feedback['aid']
 
     # check read table
-    read_record = dao.read_data(READ_DATABASE, {'uid': uid, 'aid': aid})
+    read_record = dao.find_one(READ_DATABASE, {'uid': uid, 'aid': aid})
     if read_record is None:  # if is none, insert
         res = dao.insert_many(READ_DATABASE, [{
             'timestamp': feedback['timestamp'],
             'uid': uid,
             'aid': aid,
             'readTimeLength': feedback['readTimeLength'],
-            'readSequence': feedback['Sequence'],
+            'readSequence': feedback['readSequence'],
             'readOrNot': feedback['readOrNot'],
             'commentOrNot': feedback['commentOrNot'],
             'agreeOrNot': feedback['agreeOrNot'],
             'shareOrNot': feedback['shareOrNot'],
             'commentDetail': feedback['commentDetail']
         }])
+        return {'success': True,
+                'message': 'update success!'}
     else:
+        read_record['timestamp'] = feedback['timestamp']
         read_record['readTimeLength'] = feedback['readTimeLength']
-        read_record['readSequence'] = feedback['Sequence']
+        read_record['readSequence'] = feedback['readSequence']
         read_record['readOrNot'] = feedback['readOrNot']
         read_record['commentOrNot'] = feedback['commentOrNot']
         read_record['agreeOrNot'] = feedback['agreeOrNot']
         read_record['shareOrNot'] = feedback['shareOrNot']
         read_record['commentDetail'] = feedback['commentDetail']
+
         res = dao.update_one(READ_DATABASE, {'aid': aid, 'uid': uid}, read_record)
 
-    if res['ok'] != 1:
-        return {'success': False,
-                'message': 'update fail!'}
-    else:
-        return {'success': True,
-                'message': 'update success!'}
+        if res['ok'] != 1:
+            return {'success': False,
+                    'message': 'update fail!'}
+        else:
+            return {'success': True,
+                    'message': 'update success!'}

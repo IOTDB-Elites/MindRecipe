@@ -1,10 +1,10 @@
 from pymongo import MongoClient
-from worker.database.constant import port, uri
+from worker.database.constant import port, host
 
 
 class Dao:
     def __init__(self):
-        self.conn = MongoClient(uri, port=port)
+        self.conn = MongoClient("mongodb://{}".format(host+str(port)+"/mind_recipe"), port=port)
         self.db = self.conn.mind_recipe
 
     # insert into db_name, example is here

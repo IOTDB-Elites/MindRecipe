@@ -4,6 +4,7 @@ dao = Dao()
 ARTICLE_DATABASE = 'article'
 POPULAR_DATABASE = 'popularrank'
 BEREAD_DATABASE = 'beread'
+READ_DATABASE = 'read'
 
 
 def get_article_list(category, start, end):
@@ -62,6 +63,16 @@ def get_feedback(aid):
     if feedback is None:
         return {'success': True,
                 'data': {}}
+    commentUidList = feedback['commentUidList']
+    commentList = []
+    for uid in commentUidList:
+        read_records = dao.find_one(READ_DATABASE, {'aid': aid, 'uid': uid})
+        if read_records is None:
+            continue
+        comment_details = read_records['commentDetail']
+        commentList.append({'uid': uid, 'commentDetail': comment_details})
+    del feedback['commentUidList']
+    feedback['commentList'] = commentList
     return {'success': True,
             'data': feedback}
 

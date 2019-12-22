@@ -243,7 +243,7 @@ def load_pop():
 
     for i in range(0, len(list_id_time)):
         record = list_id_time[i]
-        if record['timestamp'] <= day_time:
+        if record['timestamp'] >= day_time:
             if not (record['aid'] in map_aid_dayscore):
                 map_aid_dayscore[record['aid']] = record['score']
                 map_aid_monthscore[record['aid']] = record['score']
@@ -252,26 +252,28 @@ def load_pop():
                 map_aid_dayscore[record['aid']] = map_aid_dayscore[record['aid']] + record['score']
                 map_aid_monthscore[record['aid']] = map_aid_monthscore[record['aid']] + record['score']
                 map_aid_weekscore[record['aid']] = map_aid_weekscore[record['aid']] + record['score']
-        elif record['timestamp'] <= week_time:
+        elif record['timestamp'] >= week_time:
             if not (record['aid'] in map_aid_weekscore):
                 map_aid_monthscore[record['aid']] = record['score']
                 map_aid_weekscore[record['aid']] = record['score']
             else:
                 map_aid_monthscore[record['aid']] = map_aid_monthscore[record['aid']] + record['score']
                 map_aid_weekscore[record['aid']] = map_aid_weekscore[record['aid']] + record['score']
-        elif record['timestamp'] <= month_time:
+        elif record['timestamp'] >= month_time:
             if not (record['aid'] in map_aid_monthscore):
                 map_aid_monthscore[record['aid']] = record['score']
             else:
                 map_aid_monthscore[record['aid']] = map_aid_monthscore[record['aid']] + record['score']
         else:
             break
+
     for aid, score in map_aid_dayscore.items():
         list_aid_dayscore.append({'aid': aid, 'score': score})
     for aid, score in map_aid_weekscore.items():
         list_aid_weekscore.append({'aid': aid, 'score': score})
     for aid, score in map_aid_monthscore.items():
         list_aid_monthscore.append({'aid': aid, 'score': score})
+
     list_aid_dayscore.sort(key=lambda k: (k.get('score'), 0), reverse=True)
     list_aid_weekscore.sort(key=lambda k: (k.get('score'), 0), reverse=True)
     list_aid_monthscore.sort(key=lambda k: (k.get('score'), 0), reverse=True)
@@ -328,6 +330,10 @@ def load_pop():
                         'timestamp': datetime.datetime.now().timestamp(),
                         'temporalGranularity': 'monthly', 'articleAidList': dbms2_month_aid})
 
+    print(dbms2_day_aid)
+    print(dbms2_week_aid)
+    print(dbms2_month_aid)
+
     dao_dbms1.insert_many(POPULARRANK, cache_dbms1)
     dao_dbms2.insert_many(POPULARRANK, cache_dbms2)
 
@@ -347,8 +353,8 @@ def last_month(timestamp):
     return datetime.datetime(time.year, time.month, 1).timestamp()
 
 if __name__ == '__main__':
-    map = load_user()
-    load_article()
-    load_read(map)
-    load_be_read()
+    # map = load_user()
+    # load_article()
+    # load_read(map)
+    # load_be_read()
     load_pop()

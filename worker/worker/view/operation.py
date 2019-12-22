@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from worker.logic import article_service
 from worker.logic import user_service
 
-GET_USER_INFO_PARAMS = ['name']
+GET_USER_INFO_PARAMS = ['name', 'region']
 UPDATE_USER_INFO_PARAMS = ['region', 'dept', 'language', 'role', 'gender',
                            'name', 'uid', 'phone', 'timestamp', 'email',
                            'preferTags', 'grade', 'obtainedCredits']
