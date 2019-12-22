@@ -1,12 +1,18 @@
 # -*-coding:utf-8 -*-
-from django.http import HttpResponse
 import json
 
-from worker.logic import user_service
+from django.http import HttpResponse
+
 from worker.logic import article_service
+from worker.logic import user_service
 
 GET_USER_INFO_PARAMS = ['name']
-UPDATE_USER_INFO_PARAMS = ['uid']
+UPDATE_USER_INFO_PARAMS = ['region', 'dept', 'language', 'role', 'gender',
+                           'name', 'uid', 'phone', 'timestamp', 'email',
+                           'preferTags', 'grade', 'obtainedCredits']
+UPDATE_FEEDBACK_PARAMS = ['uid', 'aid', 'readTimeLength', 'readSequence', 'readOrNot', 'agreeOrNot', 'commentOrNot',
+                          'commentDetail', 'shareOrNot']
+
 GET_ARTICLE_LIST = ['category']
 GET_ARTICLE = ['aid']
 GET_FEEDBACK = ['aid']
@@ -51,7 +57,8 @@ def get_article_list(request):
         return warp_to_response(error_res)
     param = request.GET
     return warp_to_response(
-        article_service.get_article_list(param['category']))
+        article_service.get_article_list(param['category'], param['start'], param['end']))
+
 
 def get_article(request):
     error_res = check_get_param(request, GET_ARTICLE)
@@ -61,9 +68,11 @@ def get_article(request):
     return warp_to_response(
         article_service.get_article(param['aid']))
 
+
 def get_popular(request):
     return warp_to_response(
         article_service.get_popular())
+
 
 def get_feedback(request):
     error_res = check_get_param(request, GET_FEEDBACK)
@@ -72,12 +81,14 @@ def get_feedback(request):
     param = request.GET
     return warp_to_response(article_service.get_feedback(param['aid']))
 
+
 def get_read_list(request):
     error_res = check_get_param(request, GET_READ_LIST)
     if error_res is not None:
         return warp_to_response(error_res)
     param = request.GET
     return warp_to_response(user_service.get_read_list(param['uid']))
+
 
 # post method
 def update_user_info(request):
@@ -89,6 +100,15 @@ def update_user_info(request):
 
     return warp_to_response(
         user_service.update_user_info(user))
+
+
+def update_feedback(request):
+    feedback = post_request_to_json(request.body)
+    error_res = check_post_param(feedback, UPDATE_FEEDBACK_PARAMS)
+    if error_res is not None:
+        return warp_to_response(error_res)
+    return warp_to_response(
+        user_service.update_feedback(feedback))
 
 
 def warp_to_response(res):
@@ -111,7 +131,6 @@ def check_post_param(data, params):
                     'message': param + ' parameter is not present in request'}
 
     return None
-
 
 
 def post_request_to_json(body):
