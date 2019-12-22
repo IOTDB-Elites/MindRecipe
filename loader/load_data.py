@@ -54,26 +54,26 @@ def load_user():
     dao_dbms1 = Dao(dbms1)
     dao_dbms2 = Dao(dbms2)
     cache_dbms1 = []
-    cache_dmbs2 = []
+    cache_dbms2 = []
     with open(USER_PATH, 'r') as load_f:
         for line in load_f:
             data = json.loads(line)
             # data = user_format(data)
             uid_region_map[data['uid']] = data['region']
-            if (data['region'] == 'Hong Kong'):
+            if (data['region'] == 'Beijing'):
                 cache_dbms1.append(data)
-            elif (data['region'] == 'Beijing'):
-                cache_dmbs2.append(data)
+            elif (data['region'] == 'Hong Kong'):
+                cache_dbms2.append(data)
             if (len(cache_dbms1) == 100):
                 dao_dbms1.insert_many(USER, cache_dbms1)
                 cache_dbms1 = []
-            if (len(cache_dmbs2) == 100):
-                dao_dbms2.insert_many(USER, cache_dmbs2)
-                cache_dmbs2 = []
+            if (len(cache_dbms2) == 100):
+                dao_dbms2.insert_many(USER, cache_dbms2)
+                cache_dbms2 = []
         if (len(cache_dbms1) > 0):
             dao_dbms1.insert_many(USER, cache_dbms1)
-        if (len(cache_dmbs2) > 0):
-            dao_dbms2.insert_many(USER, cache_dmbs2)
+        if (len(cache_dbms2) > 0):
+            dao_dbms2.insert_many(USER, cache_dbms2)
     return uid_region_map
 
 
@@ -112,9 +112,9 @@ def load_read(user_region_map):
         for line in load_f:
             data = json.loads(line)
             # data = article_format(data)
-            if (user_region_map[data['uid']] == 'Hong Kong'):
+            if (user_region_map[data['uid']] == 'Beijing'):
                 cache_dbms1.append(data)
-            elif (user_region_map[data['uid']] == 'Beijing'):
+            elif (user_region_map[data['uid']] == 'Hong Kong'):
                 cache_dbms2.append(data)
             if (len(cache_dbms1) == 100):
                 dao_dbms1.insert_many(READ, cache_dbms1)
@@ -346,27 +346,9 @@ def last_month(timestamp):
     time = datetime.datetime.fromtimestamp(timestamp)
     return datetime.datetime(time.year, time.month, 1).timestamp()
 
-
-# def lastWeek(timestamp):
-#
-# def lastMonth(timestamp):
-
-
 if __name__ == '__main__':
-    # map = load_user()
-    # load_article()
-    # load_read(map)
-    # load_be_read()
-
+    map = load_user()
+    load_article()
+    load_read(map)
+    load_be_read()
     load_pop()
-
-# i = int(time.time())
-# print(i)
-# t = time.localtime(i)
-# print(time.strftime("%Y-%m-%d %H:%M:%S", t))
-# x = t + relativedelta(months=-1)
-# print()
-# data_time = time.strftime("%Y-%m-%d %H:%M:%S", t)
-
-# print(t)
-# print(data_time)

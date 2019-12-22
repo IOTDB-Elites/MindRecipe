@@ -1,5 +1,5 @@
 from master.call_worker import http_request
-from master.logic.metadata import user_region_map, workers
+from master.logic.metadata import user_region_map, article_category_map, workers
 
 
 def get_user_info(name, region):
@@ -28,3 +28,7 @@ def update_user_info(region, user):
 
 def check_region(region):
     return user_region_map.get(region, -1)
+
+
+def check_category(category):
+    return article_category_map.get(category, -1)
