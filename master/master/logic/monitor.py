@@ -8,6 +8,10 @@ def get_worker_info():
     res = []
     for worker in workers:
         cur_worker = {'url': worker}
+        if worker.split(":")[1] == '8001':
+            cur_worker['location'] = '/data/mongodb/data/dbms1'
+        elif worker.split(":")[1] == '8002':
+            cur_worker['location'] = '/data/mongodb/data/dbms2'
         try:
             worker_info = request_info(worker, {})['data']
             cur_worker['info'] = worker_info

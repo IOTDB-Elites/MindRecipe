@@ -12,7 +12,10 @@ UPDATE_USER_INFO_PARAMS = ['region', 'dept', 'language', 'role', 'gender',
                            'preferTags', 'grade', 'obtainedCredits']
 UPDATE_FEEDBACK_PARAMS = ['uid', 'aid', 'readTimeLength', 'readSequence', 'readOrNot', 'agreeOrNot', 'commentOrNot',
                           'commentDetail', 'shareOrNot']
-
+UPDATE_READ_PARAMS = ['timestamp', 'uid', 'aid', 'readTimeLength', 'readSequence', 'readOrNot', 'agreeOrNot',
+                      'commentOrNot', 'commentDetail', 'shareOrNot']
+UPDATE_BE_READ_PARAMS = ['timestamp', 'uid', 'aid', 'readTimeLength', 'readSequence', 'readOrNot', 'agreeOrNot',
+                         'commentOrNot', 'commentDetail', 'shareOrNot', 'delta_comment', 'delta_agree', 'delta_share']
 GET_ARTICLE_LIST = ['category']
 GET_ARTICLE = ['aid']
 GET_FEEDBACK = ['aid']
@@ -102,13 +105,31 @@ def update_user_info(request):
         user_service.update_user_info(user))
 
 
-def update_feedback(request):
-    feedback = post_request_to_json(request.body)
-    error_res = check_post_param(feedback, UPDATE_FEEDBACK_PARAMS)
+# def update_feedback(request):
+#     feedback = post_request_to_json(request.body)
+#     error_res = check_post_param(feedback, UPDATE_FEEDBACK_PARAMS)
+#     if error_res is not None:
+#         return warp_to_response(error_res)
+#     return warp_to_response(
+#         article_service.update_feedback(feedback))
+
+
+def update_read(request):
+    read_record = post_request_to_json(request.body)
+    error_res = check_post_param(read_record, UPDATE_READ_PARAMS)
     if error_res is not None:
         return warp_to_response(error_res)
     return warp_to_response(
-        user_service.update_feedback(feedback))
+        article_service.update_read(read_record))
+
+
+def update_be_read(request):
+    update_be_read_data = post_request_to_json(request.body)
+    error_res = check_post_param(update_be_read_data, UPDATE_BE_READ_PARAMS)
+    if error_res is not None:
+        return warp_to_response(error_res)
+    return warp_to_response(
+        article_service.update_be_read(update_be_read_data))
 
 
 def warp_to_response(res):

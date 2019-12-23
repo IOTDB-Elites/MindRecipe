@@ -31,5 +31,7 @@ urlpatterns = [
     path('api/article/get_article', operation.get_article),
     path('api/article/get_feedback', operation.get_feedback),
     path('api/user/get_read_list', operation.get_read_list),
-    path('api/article/feedback', operation.update_feedback)
+    # path('api/article/feedback', operation.update_feedback),
+    path('api/read/update_read', operation.update_read),
+    path('api/read/update_be_read', operation.update_be_read)
 ]

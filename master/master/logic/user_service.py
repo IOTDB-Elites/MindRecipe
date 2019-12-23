@@ -37,16 +37,20 @@ def get_read_list(uid, region):
             'data': {}}
 
 
-def update_user_info(region, user):
+def update_user_info(user):
     # check region is known
+    region = user['region']
     loc = check_region(region)
     if loc == -1:
-        return {'success': True,
+        return {'success': False,
                 'message': 'Unknown user region: ' + region,
                 'data': {}}
 
-    worker = workers[loc]
-    return http_request.update_user_info(worker, user)
+    ## TODO consistency
+    # for worker in workers:
+    worker = workers[loc[0]]
+    res = http_request.update_user_info(worker, user)
+    return res
 
 
 def check_region(region):

@@ -3,7 +3,7 @@ import json
 
 from django.http import HttpResponse
 
-from master.logic import user_service, article_service
+from master.logic import user_service, article_service, worker_op
 
 GET_USER_INFO_PARAMS = ['name', 'region']
 UPDATE_USER_INFO_PARAMS = ['region']
@@ -13,6 +13,8 @@ UPDATE_USER_INFO_PARAMS = ['region', 'dept', 'language', 'role', 'gender',
                            'preferTags', 'grade', 'obtainedCredits']
 UPDATE_FEEDBACK_PARAMS = ['uid', 'aid', 'readTimeLength', 'readSequence', 'readOrNot', 'agreeOrNot', 'commentOrNot',
                           'commentDetail', 'shareOrNot']
+
+START_DBMS_PARAM = ['ip', 'db_port']
 
 GET_ARTICLE_LIST = ['category']
 GET_ARTICLE = ['aid']
@@ -71,8 +73,17 @@ def get_article_list(request):
         article_service.get_article_list(param['category'], param['start'], param['end']))
 
 
+def add_dbms(request):
+    error_res = check_get_param(request, START_DBMS_PARAM)
+    if error_res is not None:
+        return warp_to_response(error_res)
+    param = request.GET
+    return warp_to_response(worker_op.add_worker(param['ip'], param['db_port']))
+
+
 def get_popular(request):
     return warp_to_response(article_service.get_popular())
+
 
 def get_feedback(request):
     error_res = check_get_param(request, GET_FEEDBACK)
@@ -80,6 +91,7 @@ def get_feedback(request):
         return warp_to_response(error_res)
     param = request.GET
     return warp_to_response(article_service.get_feedback(param['aid']))
+
 
 def get_article(request):
     error_res = check_get_param(request, GET_ARTICLE)
@@ -100,7 +112,17 @@ def update_user_info(request):
         return warp_to_response(error_res)
 
     return warp_to_response(
-        user_service.update_user_info(user['region'], user))
+        user_service.update_user_info(user))
+
+
+def feedback(request):
+    input_feedback = post_request_to_json(request.body)
+    error_res = check_post_param(input_feedback, UPDATE_FEEDBACK_PARAMS)
+    if error_res is not None:
+        return warp_to_response(error_res)
+    return warp_to_response(
+        article_service.update_feedback(input_feedback)
+    )
 
 
 def warp_to_response(res):
@@ -127,5 +149,3 @@ def check_post_param(data, params):
 
 def post_request_to_json(body):
     return json.loads(body.decode('utf-8'))
-
-

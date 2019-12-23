@@ -5,6 +5,7 @@ import json
 from worker.logic.monitor import report
 
 
+
 def receive_heartbeat(request):
     return warp_to_response({'success': True})
 

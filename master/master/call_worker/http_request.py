@@ -11,6 +11,9 @@ GET_ARTICLE_LIST = '/api/article/get_list'
 GET_POPULAR = '/api/article/get_popular'
 GET_ARTICLE = '/api/article/get_article'
 GET_FEEDBACK = '/api/article/get_feedback'
+UPDATE_FEEDBACK = '/api/article/feedback'
+UPDATE_READ = '/api/read/update_read'
+UPDATE_BE_READ = '/api/read/update_be_read'
 
 HTTP = 'http://'
 
@@ -40,6 +43,16 @@ def get_article_list(url, data):
 def update_user_info(url, data):
     return send_post_request(HTTP + url + UPDATE_USER_INFO_API, data)
 
+
+def update_feedback(url, data):
+    return send_post_request(HTTP + url + UPDATE_FEEDBACK, data)
+
+
+def update_read(url, data):
+    return send_post_request(HTTP + url + UPDATE_READ, data)
+
+def update_be_read(url, data):
+    return send_post_request(HTTP + url + UPDATE_BE_READ, data)
 
 def get_popular(url):
     return send_get_request(HTTP + url + GET_POPULAR, {})
@@ -77,3 +90,5 @@ def send_post_request(url, data):
 
     return {'success': False,
             'message': 'worker unreachable, please retry'}
+
+
