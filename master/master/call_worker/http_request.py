@@ -14,6 +14,7 @@ GET_FEEDBACK = '/api/article/get_feedback'
 UPDATE_FEEDBACK = '/api/article/feedback'
 UPDATE_READ = '/api/read/update_read'
 UPDATE_BE_READ = '/api/read/update_be_read'
+REMOVE_DBMS = 'api/admin/shut_down'
 
 HTTP = 'http://'
 
@@ -66,6 +67,10 @@ def get_article(url, data):
 
 def get_feedback(url, data):
     return send_get_request(HTTP + url + GET_FEEDBACK, data)
+
+
+def remove_dbms(url, data):
+    send_get_request(HTTP + url + REMOVE_DBMS, data)
 
 
 def send_get_request(url, data, time_out=None):

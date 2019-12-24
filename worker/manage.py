@@ -2,7 +2,6 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from django.http import HttpResponse
 from worker.database import constant
 
 

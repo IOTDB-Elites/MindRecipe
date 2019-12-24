@@ -33,5 +33,6 @@ urlpatterns = [
     path('api/article/get_article', operation.get_article),
     path('api/article/get_feedback', operation.get_feedback),
     path('api/article/feedback', operation.feedback),
-    path('api/admin/add_dbms', operation.add_dbms)
+    path('api/admin/add_dbms', operation.add_dbms),
+    path('api/admin/remove_dbms', operation.remove_dbms)
 ]

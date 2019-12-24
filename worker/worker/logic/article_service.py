@@ -1,6 +1,6 @@
 from worker.database.dao import Dao
+from worker.logic.hdfs_reader import read_txt, read_img
 from worker.logic.paramExcep import paramExcp
-from worker.logic.hdfs_reader import read_txt
 
 dao = Dao()
 ARTICLE_DATABASE = 'article'
@@ -59,9 +59,15 @@ def get_article(aid):
         return {'success': True,
                 'data': {}}
 
-    # filename = 'a'+ str(article['aid']) + '/' + str(article['text']) ## TODO
-    # lines = read_txt(filename)
-    # article['text'] = lines
+    filename = 'articles/article' + str(article['aid']) + '/' + str(article['text'])  ## TODO
+    lines = read_txt(filename)
+    article['text'] = lines
+
+    # imgs = []
+    # for image_name in article['image']:
+    #     imgs.append(read_img('articles/article' + str(article['aid']) + '/' + image_name))
+    #
+    # article['image'] = imgs
 
     return {'success': True,
             'data': article}
@@ -355,7 +361,6 @@ def update_be_read(update_be_read_data):
             'message': 'update success'
         }
     else:
-        print("XXXXXXXXXXXXXXX, recieved from master: " + str(update_be_read_data))
         timestamp = update_be_read_data['timestamp']
         readUidList = be_read_item['readUidList']
         if delta_read == 1:

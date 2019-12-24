@@ -14,7 +14,8 @@ UPDATE_USER_INFO_PARAMS = ['region', 'dept', 'language', 'role', 'gender',
 UPDATE_FEEDBACK_PARAMS = ['uid', 'aid', 'readTimeLength', 'readSequence', 'readOrNot', 'agreeOrNot', 'commentOrNot',
                           'commentDetail', 'shareOrNot']
 
-START_DBMS_PARAM = ['ip', 'db_port']
+ADD_DBMS_PARAM = ['ip', 'db_port']
+REMOVE_DBMS_PARAM = ['ip']
 
 GET_ARTICLE_LIST = ['category']
 GET_ARTICLE = ['aid']
@@ -74,12 +75,19 @@ def get_article_list(request):
 
 
 def add_dbms(request):
-    error_res = check_get_param(request, START_DBMS_PARAM)
+    error_res = check_get_param(request, ADD_DBMS_PARAM)
     if error_res is not None:
         return warp_to_response(error_res)
     param = request.GET
     return warp_to_response(worker_op.add_worker(param['ip'], param['db_port']))
 
+def remove_dbms(request):
+    error_res = check_get_param(request, REMOVE_DBMS_PARAM)
+    if error_res is not None:
+        return warp_to_response(error_res)
+    param = request.GET
+    return warp_to_response(worker_op.remove_worker(param['ip']))
+    return None
 
 def get_popular(request):
     return warp_to_response(article_service.get_popular())
@@ -149,3 +157,5 @@ def check_post_param(data, params):
 
 def post_request_to_json(body):
     return json.loads(body.decode('utf-8'))
+
+
