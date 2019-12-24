@@ -21,7 +21,7 @@ RETRY_COUNT = 2
 
 
 def request_heartbeat(url):
-    return send_get_request(HTTP + url + HEARTBEAT_API, {})
+    return send_get_request(HTTP + url + HEARTBEAT_API, {}, 2)
 
 
 def request_info(url, data):
@@ -51,8 +51,10 @@ def update_feedback(url, data):
 def update_read(url, data):
     return send_post_request(HTTP + url + UPDATE_READ, data)
 
+
 def update_be_read(url, data):
     return send_post_request(HTTP + url + UPDATE_BE_READ, data)
+
 
 def get_popular(url):
     return send_get_request(HTTP + url + GET_POPULAR, {})
@@ -66,14 +68,15 @@ def get_feedback(url, data):
     return send_get_request(HTTP + url + GET_FEEDBACK, data)
 
 
-def send_get_request(url, data):
+def send_get_request(url, data, time_out=None):
     for i in range(RETRY_COUNT):
         try:
-            response = requests.get(url, params=data)
+            response = requests.get(url, params=data, time_out=time_out)
             return response.json()
         except:
             print('retry count: ', i + 1)
 
+    print("here")
     return {'success': False,
             'message': 'worker unreachable, please retry'}
 
@@ -90,5 +93,3 @@ def send_post_request(url, data):
 
     return {'success': False,
             'message': 'worker unreachable, please retry'}
-
-
