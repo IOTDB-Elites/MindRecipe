@@ -1,8 +1,10 @@
-import subprocess
-import random
-import time
 import socket
+import subprocess
+import time
+
+from master.call_worker import http_request
 from master.logic import metadata
+
 
 def is_open(ip, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,13 +17,20 @@ def is_open(ip, port):
 
 
 def add_worker(ip, port):
-    server_port = random.randint(8000, 9000)
-    worker = ip + ":" + str(server_port)
-    subprocess.Popen('./start_worker.sh ' + worker + ' ' + port, shell=True, env={})
-    metadata.workers.append(worker)
-    time.sleep(5)
+    print(ip)
+    print(port)
+    metadata.workers.append(ip)
+    metadata.workers_port.append(port)
+    subprocess.Popen('./start_worker.sh ' + ip + ' ' + port, shell=True, env={})
+    print(metadata.workers)
+    # time.sleep(5)
     return {
         'success': True,
         'message': 'assigned port: ' + str(port),
         'data': {}
     }
+
+
+def remove_worker(ip):
+    res = http_request.remove_dbms(ip, {})
+    return {'success': True}

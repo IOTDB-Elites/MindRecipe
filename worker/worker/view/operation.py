@@ -1,5 +1,7 @@
 # -*-coding:utf-8 -*-
 import json
+import os
+import signal
 
 from django.http import HttpResponse
 
@@ -156,3 +158,7 @@ def check_post_param(data, params):
 
 def post_request_to_json(body):
     return json.loads(body.decode('utf-8'))
+
+
+def showt_down():
+    os.kill(os.getpid(), signal.SIGKILL)

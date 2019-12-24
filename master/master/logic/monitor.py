@@ -13,9 +13,14 @@ def get_worker_info():
         elif worker.split(":")[1] == '8002':
             cur_worker['location'] = '/data/mongodb/data/dbms2'
         try:
-            worker_info = request_info(worker, {})['data']
-            cur_worker['info'] = worker_info
-            cur_worker['status'] = 'OK'
+            result = request_info(worker, {})
+            print("result is : " + str(result))
+            if not bool(result['success']):
+                cur_worker['status'] = 'DOWN'
+            else:
+                worker_info = result['data']
+                cur_worker['info'] = worker_info
+                cur_worker['status'] = 'OK'
         except requests.exceptions.ConnectionError:
             # worker is down!
             cur_worker['status'] = 'DOWN'
