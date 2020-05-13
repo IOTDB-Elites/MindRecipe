@@ -14,7 +14,7 @@ schedule = sched.scheduler(time.time, time.sleep)
 
 
 def start_worker(worker, port):
-    subprocess.Popen('./start_worker.sh ' + worker + ' ' + port, shell=True, env={})
+    subprocess.Popen(['./start_worker.sh', worker, port], shell=False, env={})
 
 
 def send_heartbeat(inc):

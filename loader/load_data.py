@@ -3,9 +3,9 @@ import json
 
 from loader.dao import Dao
 
-ARTICLE_PATH = '/data/mind_recipe_raw_data/article.dat'
-USER_PATH = '/data/mind_recipe_raw_data/user.dat'
-READ_PATH = '/data/mind_recipe_raw_data/read.dat'
+ARTICLE_PATH = '/home/ubuntu/xuekaifeng/readingProject/db-generation/article.dat'
+USER_PATH = '/home/ubuntu/xuekaifeng/readingProject/db-generation/user.dat'
+READ_PATH = '/home/ubuntu/xuekaifeng/readingProject/db-generation/read.dat'
 
 ARTICLE = 'article'
 USER = 'user'
@@ -55,6 +55,8 @@ def load_user():
     dao_dbms2 = Dao(dbms2)
     cache_dbms1 = []
     cache_dbms2 = []
+    dao_dbms1.clear_database(USER)
+    dao_dbms2.clear_database(USER)
     with open(USER_PATH, 'r') as load_f:
         for line in load_f:
             data = json.loads(line)
@@ -82,6 +84,8 @@ def load_article():
     cache_dbms2 = []
     dao_dbms1 = Dao(dbms1)
     dao_dbms2 = Dao(dbms2)
+    dao_dbms1.clear_database(ARTICLE)
+    dao_dbms2.clear_database(ARTICLE)
     with open(ARTICLE_PATH, 'r') as load_f:
         for line in load_f:
             data = json.loads(line)
@@ -108,6 +112,8 @@ def load_read(user_region_map):
     cache_dbms2 = []
     dao_dbms1 = Dao(dbms1)
     dao_dbms2 = Dao(dbms2)
+    dao_dbms1.clear_database(READ)
+    dao_dbms2.clear_database(READ)
     with open(READ_PATH, 'r') as load_f:
         for line in load_f:
             data = json.loads(line)
@@ -140,6 +146,7 @@ def load_be_read():
     map_aid_agreeUidList = {}
     map_aid_shareNum = {}
     map_aid_shareUidList = {}
+
     with open(ARTICLE_PATH, 'r') as load_article:
         for line in load_article:
             data = json.loads(line)
@@ -179,18 +186,20 @@ def load_be_read():
     cache_dbms2 = []
     dao_dbms1 = Dao(dbms1)
     dao_dbms2 = Dao(dbms2)
+    dao_dbms1.clear_database(BEREAD)
+    dao_dbms2.clear_database(BEREAD)
     for aid in map_aid_id:
         data = {'id': map_aid_id[aid],
                 'timestamp': map_aid_timestamp[aid],
                 'aid': aid,
-                'readNum': map_aid_readNum[aid],
-                'readUidList': map_aid_readUidList[aid],
-                'commentNum': map_aid_commentNum[aid],
-                'commentUidList': map_aid_commentUidList[aid],
-                'agreeNum': map_aid_agreeNum[aid],
-                'agreeUidList': map_aid_agreeUidList[aid],
-                'shareNum': map_aid_shareNum[aid],
-                'shareUidList': map_aid_shareUidList[aid]}
+                'readNum': map_aid_readNum.get(aid, 0),
+                'readUidList': map_aid_readUidList.get(aid, []),
+                'commentNum': map_aid_commentNum.get(aid, 0),
+                'commentUidList': map_aid_commentUidList.get(aid, []),
+                'agreeNum': map_aid_agreeNum.get(aid, 0),
+                'agreeUidList': map_aid_agreeUidList.get(aid, []),
+                'shareNum': map_aid_shareNum.get(aid, 0),
+                'shareUidList': map_aid_shareUidList.get(aid, [])}
         if map_aid_category[aid] == 'science':
             cache_dbms1.append(data)
             cache_dbms2.append(data)
@@ -310,6 +319,8 @@ def load_pop():
     cache_dbms2 = []
     dao_dbms1 = Dao(dbms1)
     dao_dbms2 = Dao(dbms2)
+    dao_dbms1.clear_database(POPULARRANK)
+    dao_dbms2.clear_database(POPULARRANK)
     cache_dbms1.append({'id': 1,
                         'timestamp': datetime.datetime.now().timestamp(),
                         'temporalGranularity': 'daily', 'articleAidList': dbms1_day_aid})
@@ -334,6 +345,7 @@ def load_pop():
     print(dbms2_week_aid)
     print(dbms2_month_aid)
 
+
     dao_dbms1.insert_many(POPULARRANK, cache_dbms1)
     dao_dbms2.insert_many(POPULARRANK, cache_dbms2)
 
@@ -353,8 +365,8 @@ def last_month(timestamp):
     return datetime.datetime(time.year, time.month, 1).timestamp()
 
 if __name__ == '__main__':
-    # map = load_user()
-    # load_article()
-    # load_read(map)
-    # load_be_read()
+    map = load_user()
+    load_article()
+    load_read(map)
+    load_be_read()
     load_pop()

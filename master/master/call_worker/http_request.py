@@ -76,7 +76,7 @@ def remove_dbms(url, data):
 def send_get_request(url, data, time_out=None):
     for i in range(RETRY_COUNT):
         try:
-            response = requests.get(url, params=data, time_out=time_out)
+            response = requests.get(url, params=data, timeout=time_out)
             return response.json()
         except:
             print('retry count: ', i + 1)
@@ -89,8 +89,6 @@ def send_get_request(url, data, time_out=None):
 def send_post_request(url, data):
     for i in range(RETRY_COUNT):
         try:
-            print(data)
-            print(json.dumps(data))
             response = requests.post(url, data=json.dumps(data))
             return response.json()
         except:

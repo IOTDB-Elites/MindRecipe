@@ -1,5 +1,5 @@
 from worker.database.dao import Dao
-from worker.logic.hdfs_reader import read_txt, read_img
+# from worker.logic.hdfs_reader import read_txt
 from worker.logic.paramExcep import paramExcp
 
 dao = Dao()
@@ -59,9 +59,9 @@ def get_article(aid):
         return {'success': True,
                 'data': {}}
 
-    filename = 'articles/article' + str(article['aid']) + '/' + str(article['text'])  ## TODO
-    lines = read_txt(filename)
-    article['text'] = lines
+    # filename = 'articles/article' + str(article['aid']) + '/' + str(article['text'])  ## TODO
+    # lines = read_txt(filename)
+    article['text'] = 'TsinghuaTsinghua'
 
     # imgs = []
     # for image_name in article['image']:
