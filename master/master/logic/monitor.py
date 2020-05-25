@@ -6,8 +6,10 @@ from master.logic.metadata import workers
 
 def get_worker_info():
     res = []
-    for worker in workers:
-        cur_worker = {'url': worker}
+    for i in range(len(workers)):
+        loc = i % 2
+        worker = workers[loc]
+        cur_worker = {'url': workers[i]}
         if worker.split(":")[1] == '8001':
             cur_worker['location'] = '/data/mongodb/data/dbms1'
         elif worker.split(":")[1] == '8002':

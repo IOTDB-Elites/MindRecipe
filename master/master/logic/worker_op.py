@@ -21,7 +21,7 @@ def add_worker(ip, port):
     print(port)
     metadata.workers.append(ip)
     metadata.workers_port.append(port)
-    subprocess.Popen('./start_worker.sh ' + ip + ' ' + port, shell=True, env={})
+    # subprocess.Popen('/home/fit/reading/start_worker.sh ' + ip + ' ' + port, shell=True, env={})
     print(metadata.workers)
     # time.sleep(5)
     return {
@@ -32,5 +32,7 @@ def add_worker(ip, port):
 
 
 def remove_worker(ip):
+    metadata.workers.pop()
+    metadata.workers_port.pop()
     res = http_request.remove_dbms(ip, {})
     return {'success': True}

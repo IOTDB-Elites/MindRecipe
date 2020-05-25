@@ -14,11 +14,11 @@ schedule = sched.scheduler(time.time, time.sleep)
 
 
 def start_worker(worker, port):
-    subprocess.Popen(['./start_worker.sh', worker, port], shell=False, env={})
+    subprocess.Popen(['/home/fit/reading/start_worker.sh', worker, port], shell=False, env={})
 
 
 def send_heartbeat(inc):
-    for i in range(len(workers)):
+    for i in range(2):
         worker = workers[i]
         res = request_heartbeat(worker)
         if not res['success']:

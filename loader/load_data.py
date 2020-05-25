@@ -3,9 +3,9 @@ import json
 
 from loader.dao import Dao
 
-ARTICLE_PATH = '/home/ubuntu/xuekaifeng/readingProject/db-generation/article.dat'
-USER_PATH = '/home/ubuntu/xuekaifeng/readingProject/db-generation/user.dat'
-READ_PATH = '/home/ubuntu/xuekaifeng/readingProject/db-generation/read.dat'
+ARTICLE_PATH = '/home/fit/readingDb/db-generation/article.dat'
+USER_PATH = '/home/fit/readingDb/db-generation/user.dat'
+READ_PATH = '/home/fit/readingDb/db-generation/read.dat'
 
 ARTICLE = 'article'
 USER = 'user'
